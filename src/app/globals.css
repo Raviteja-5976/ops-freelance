@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* surfaces */
+  --paper: #F7F8F7;
+  --surface: #FFFFFF;
+  --ink-50: #F1F4F2;
+  --ink-100: #E7ECE8;
+  --ink-200: #D8E0DB;
+  --ink-300: #BCC7C1;
+  --ink-400: #94A39B;
+  --ink-500: #6B7D75;
+  --ink-600: #4C6058;
+  --ink-800: #1F332E;
+  --ink-950: #0B1F1B;
+
+  /* river */
+  --river-50: #EAF6F4;
+  --river-100: #D3EDE9;
+  --river-300: #6FC9BE;
+  --river-500: #16A394;
+  --river-700: #0C6A5F;
+  --river-800: #0A554C;
+  --river-950: #052C27;
+
+  /* status */
+  --amber-100: #F7EBD3;
+  --amber-600: #A8730F;
+  --amber-800: #7A5210;
+  --brick-100: #F8E5E1;
+  --brick-600: #B23A2B;
+  --brick-800: #8C2D22;
+
+  /* semantic */
+  --text: var(--ink-950);
+  --text-muted: var(--ink-600);
+  --text-subtle: var(--ink-500);
+  --border: var(--ink-100);
+  --border-strong: var(--ink-200);
+  --accent: var(--river-700);
+  --accent-live: var(--river-500);
+
+  /* radius */
+  --r-xs: 3px;
+  --r-sm: 5px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-full: 9999px;
+
+  /* motion */
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --t-fast: 120ms;
+  --t-base: 200ms;
+  --t-slow: 360ms;
+  --t-draw: 700ms;
+
+  /* layout */
+  --measure: 68ch;
+  --client-max: 680px;
+  --admin-max: 1240px;
+  --rail-gutter: 28px;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink-950);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typography helper classes per spec */
+.money, .tnum {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--river-500);
+  outline-offset: 2px;
+}
+
+/* Print stylesheet */
+@media print {
+  body {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  header, nav, .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+}
