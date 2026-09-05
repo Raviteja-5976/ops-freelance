@@ -1,0 +1,34 @@
+# AWS Amplify Hosting build specification.
+#
+# This app is server-rendered: middleware guards every route, and the API routes
+# under /api use the Supabase service role and nodemailer. Amplify must
+# therefore deploy it on the WEB_COMPUTE platform, not as a static site. Amplify
+# detects that automatically from the Next.js build output — do not set
+# `output: "export"` in next.config.mjs or the API routes and middleware will
+# silently stop working.
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        # Match the Node version the app is developed against. Amplify's build
+        # image ships nvm; skip quietly if a future image does not.
+        - nvm use $(cat .nvmrc) || echo "nvm unavailable, using image default"
+        - node --version
+        # `npm ci` respects package-lock.json, so a deploy installs exactly what
+        # was tested rather than resolving fresh versions.
+        - npm ci
+        # Fails the build early and loudly when a required variable is missing,
+        # rather than shipping a bundle with placeholder values baked in.
+        - node scripts/check-env.mjs
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*

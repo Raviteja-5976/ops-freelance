@@ -1,5 +1,29 @@
-.env*
-node_modules
+# Secrets — never commit real credentials.
+# .env.example is the documented template and is intentionally kept.
+.env
+.env.*
+!.env.example
+
+# Dependencies & build output
+node_modules/
 .next/
+out/
+build/
+*.tsbuildinfo
+
+# Amplify
+.amplify-hosting/
+amplify_outputs*.json
+
+# Logs & OS noise
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Internal design notes, not needed to build or deploy
 reference/
-supabase/
