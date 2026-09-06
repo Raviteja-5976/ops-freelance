@@ -27,3 +27,6 @@ Thumbs.db
 
 # Internal design notes, not needed to build or deploy
 reference/
+
+
+amplify.yml
