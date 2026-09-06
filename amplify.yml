@@ -23,6 +23,29 @@ frontend:
         - node scripts/check-env.mjs
     build:
       commands:
+        # Amplify injects console environment variables into the BUILD container
+        # only. Next.js server code — every /api route handler — reads
+        # process.env at REQUEST time, and AWS deliberately withholds those
+        # variables from the compute runtime:
+        #
+        #   "a Next.js server component doesn't have access to those environment
+        #    variables by default. This behavior is intentional."
+        #   https://docs.aws.amazon.com/amplify/latest/userguide/ssr-environment-variables.html
+        #
+        # Without this, RAZORPAY_KEY_ID and SUPABASE_SERVICE_ROLE_KEY are
+        # undefined in production even though they are set in the console, and
+        # the app reports "Razorpay is not configured on this environment".
+        #
+        # Writing them to .env.production is the fix AWS documents. The pattern
+        # is anchored to the start of the line, so a variable is captured by its
+        # name and never because some unrelated value happens to contain the
+        # word. The trailing [A-Z0-9_]* lets the first four entries act as
+        # prefixes while the rest match in full.
+        - rm -f .env.production
+        - env | grep -E '^(NEXT_PUBLIC_|RAZORPAY_|SMTP_|EMAIL_|SUPABASE_SERVICE_ROLE_KEY|FOUNDER_EMAIL|INFO_EMAIL)[A-Z0-9_]*=' >> .env.production
+        # Log the names captured (never the values) so a missing variable is
+        # obvious in the build log instead of surfacing as a runtime error.
+        - echo "Runtime env vars written to .env.production: $(cut -d= -f1 .env.production | tr '\n' ' ')"
         - npm run build
   artifacts:
     baseDirectory: .next

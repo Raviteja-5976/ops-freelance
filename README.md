@@ -74,6 +74,21 @@ CodeCommit). Push this repo to one of them.
 Set every one of these in **App settings → Environment variables**. The build
 fails with a clear message if a required one is missing.
 
+> **Why `amplify.yml` copies them into `.env.production`.** Amplify injects
+> console variables into the *build* container only — AWS deliberately withholds
+> them from the Next.js server runtime
+> ([docs](https://docs.aws.amazon.com/amplify/latest/userguide/ssr-environment-variables.html)).
+> Without that copy step, every `/api` route sees `undefined` in production even
+> though the console shows the values, which surfaces as *"Razorpay is not
+> configured on this environment"* and silent failures in sign-up, invites and
+> email. If you add a new server-side variable, **add its name to the `grep`
+> pattern in `amplify.yml`** or it will not reach production.
+>
+> One consequence worth knowing: these values end up inside the deployment
+> artifact, so anyone who can read your Amplify artifacts can read them. That is
+> inherent to this approach and is why AWS suggests IAM roles for AWS resources —
+> not an option for Supabase, Razorpay or SMTP.
+
 | Variable                         | Required | Notes                                                            |
 | -------------------------------- | :------: | ---------------------------------------------------------------- |
 | `NEXT_PUBLIC_SUPABASE_URL`       |    yes   | Inlined into the browser bundle **at build time**                 |
